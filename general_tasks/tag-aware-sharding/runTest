@@ -1,0 +1,5 @@
+#!/bin/bash
+./fileSetup.sh
+./LaunchShards.sh
+mongo --port 29028 configureShards.js
+mongo --port 29028 ../../generateData/gen-global-points.js 
