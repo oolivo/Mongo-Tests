@@ -1,0 +1,77 @@
+Compile ZFS
+-----------
+
+sudo yum install git
+sudo yum groupinstall "Development Tools"
+sudo yum install kernel-devel zlib-devel libuuid-devel libblkid-devel libselinux-devel parted lsscsi wget
+wget http://archive.zfsonlinux.org/downloads/zfsonlinux/spl/spl-x.y.z.tar.gz
+git clone git://github.com/zfsonlinux/spl.git
+git clone git://github.com/zfsonlinux/zfs.git
+
+
+
+Autogen RPMs
+-------------
+
+cd spl/
+./autogen.sh
+./configure --with-config=user
+make  rpm-utils rpm-dkms
+cd ../zfs/
+./autogen.sh
+./configure --with-config=user
+ make  rpm-utils rpm-dkms
+
+
+
+Get dkms
+------------
+wget http://mirror.pnl.gov/epel/6/i386/epel-release-6-8.noarch.rpm
+rpm -ivh epel-release-6-8.noarch.rpm
+sudo yum install dkms
+
+
+install RPMS
+------------
+
+sudo yum localinstall spl/spl-0.6.2-36_g703371d.el6.x86_64.rpm spl/spl-dkms-0.6.2-36_g703371d.el6.noarch.rpm zfs/zfs-0.6.2-268_g7809eb8.el6.x86_64.rpm zfs/zfs-dkms-0.6.2-268_g7809eb8.el6.noarch.rpm
+
+
+
+Get Kernel Headers
+------------------
+
+wget ftp://mirror.switch.ch/pool/4/mirror/scientificlinux/6.3/x86_64/updates/security/kernel-devel-2.6.32-358.14.1.el6.x86_64.rpm
+sudo rpm -if kernel-devel-2.6.32-358.14.1.el6.x86_64.rpm
+sudo yum downgrade kernel-devel-2.6.32-358.14.1.el6.x86_64.rpm
+sudo yum localinstall kernel-devel-2.6.32-358.14.1.el6.x86_64.rpm
+
+
+
+Install ZFS
+------------
+
+sudo dkms install spl -v 0.6.2
+sudo dkms install zfs -v 0.6.2
+sudo modprobe zfs
+zfs list
+
+
+
+Commands to configure zpool
+----------------------------
+zfs set compress=lz4 SSDZFS
+//zfs set sync=disabled EBSZFS
+zfs set recordsize=4k SSDZFS
+zfs get all
+sudo zfs list
+zfs list -o name,ratio
+
+
+
+
+Install DTRACE
+----------------------
+wget ftp://crisp.dyndns-server.com/pub/release/website/dtrace/dtrace-20140420.tar.bz2
+
+
